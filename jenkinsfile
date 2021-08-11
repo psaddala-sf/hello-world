@@ -1,9 +1,31 @@
 pipeline {
-    agent { docker { image 'maven:3.3.3' } }
+    agent any  
+
     stages {
-        stage('build') {
+        stage('netrc') {
             steps {
-                sh 'mvn --version'
+                script {
+                    def netrc = String.format("machine api.heroku.com\n  login %s\n  password %s\n",
+                                              params.herokuemail, params.herokukey)
+                    writeFile(file: "${HOME}/.netrc", text: netrc)
+                }
+            }
+        }
+        stage('debug') {
+            steps {
+                script {
+                   def data = readFile(file: "${HOME}/.netrc")
+                   println(data)
+                }
+            }
+            
+        }
+        stage('heroku') {
+            steps {
+                script {
+                    sh 'heroku whoami'
+                    sh "rm $HOME/.netrc"
+                }
             }
         }
     }

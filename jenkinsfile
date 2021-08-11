@@ -5,28 +5,13 @@ pipeline {
         stage('netrc') {
             steps {
                 script {
-                    def netrc = String.format("machine api.heroku.com\n  login %s\n  password %s\n",
-                                              params.herokuemail, params.herokukey)
+                    def netrc = String.format("machine api.heroku.com\n  login %s\n  password %s\n", params.Email, params.HEROKU_API_KEY )
                     writeFile(file: "${HOME}/.netrc", text: netrc)
+                    sh "heroku whoami"
                 }
             }
         }
-        stage('debug') {
-            steps {
-                script {
-                   def data = readFile(file: "${HOME}/.netrc")
-                   println(data)
-                }
-            }
-            
-        }
-        stage('heroku') {
-            steps {
-                script {
-                    sh 'heroku whoami'
-                    sh "rm $HOME/.netrc"
-                }
-            }
-        }
+        
+        
     }
 }

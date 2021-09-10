@@ -1,6 +1,18 @@
-pipeline {
-    agent docsite 
+#!/usr/bin/env groovy
+import groovy.json.JsonOutput
+import hudson.model.Action;
 
+import org.jenkinsci.plugins.workflow.graph.FlowNode
+import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode
+import org.jenkinsci.plugins.workflow.actions.LabelAction
+
+env.jenkins_node_label = 'docsite'
+pipeline {
+    agent {
+        node {
+            label "$jenkins_node_label"
+        }
+    } 
     stages {
         stage('netrc') {
             steps {
